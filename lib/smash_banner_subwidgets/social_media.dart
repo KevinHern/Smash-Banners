@@ -53,95 +53,53 @@ class SocialMediaForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormCard(
-      formKey: this.socialMediaKeyForm,
-      child: Column(
-        children: [
-          Text(
-            "Social Media",
-            style: Theme.of(context).textTheme.headline1,
-          ),
-          utils.EmptySeparator(
-            scale: 0.02,
-          ),
-          FormContainerSection(
-            title: "Social Media Platforms",
-            child: Column(
-              children: [
-                SocialMediaPlatformForm(
-                  label: 'Twitch Channel',
-                  asset: 'twitch',
-                  socialMediaOption: 0,
-                ),
-                const SizedBox(
-                  height: spacing,
-                ),
-                SocialMediaPlatformForm(
-                  label: 'Twitter Handle',
-                  asset: 'twitter',
-                  socialMediaOption: 1,
-                ),
-                const SizedBox(
-                  height: spacing,
-                ),
-                SocialMediaPlatformForm(
-                  label: 'Youtube Channel',
-                  asset: 'youtube',
-                  socialMediaOption: 2,
-                ),
-                const SizedBox(
-                  height: spacing,
-                ),
-                SocialMediaPlatformForm(
-                  label: 'Instagram User',
-                  asset: 'instagram',
-                  socialMediaOption: 3,
-                ),
-                const SizedBox(
-                  height: spacing,
-                ),
-                SocialMediaPlatformForm(
-                  label: 'Discord User',
-                  asset: 'discord',
-                  socialMediaOption: 4,
-                ),
-              ],
-            ),
-          ),
-          utils.EmptySeparator(
-            scale: 0.02,
-          ),
-          DropdownSearch<String>(
-            mode: Mode.MENU,
-            maxHeight: 470,
-            items: ["Font 1", "Font 2"],
-            dropdownSearchDecoration: InputDecoration(
-              labelText: "Font to use",
-              hintText: "Font to user",
-              hintStyle: TextStyle(
-                fontFamily: Theme.of(context).textTheme.subtitle1!.fontFamily,
-                fontWeight: FontWeight.bold,
+    return Column(
+      children: [
+        FormContainerSection(
+          title: "Social Media Platforms",
+          child: Column(
+            children: [
+              SocialMediaPlatformForm(
+                label: 'Twitch Channel',
+                asset: 'twitch',
+                socialMediaOption: 0,
               ),
-              labelStyle: TextStyle(
-                fontFamily: Theme.of(context).textTheme.bodyText1!.fontFamily,
-                fontWeight: FontWeight.bold,
+              const SizedBox(
+                height: spacing,
               ),
-            ),
-            dropdownSearchBaseStyle: TextStyle(
-              fontFamily: Theme.of(context).textTheme.bodyText1!.fontFamily,
-            ),
-            showSearchBox: true,
-            onChanged: (value) => {},
-            showSelectedItems: true,
-            validator: (String? item) {
-              if (item == null)
-                return "Required field";
-              else
-                return null;
-            },
+              SocialMediaPlatformForm(
+                label: 'Twitter Handle',
+                asset: 'twitter',
+                socialMediaOption: 1,
+              ),
+              const SizedBox(
+                height: spacing,
+              ),
+              SocialMediaPlatformForm(
+                label: 'Youtube Channel',
+                asset: 'youtube',
+                socialMediaOption: 2,
+              ),
+              const SizedBox(
+                height: spacing,
+              ),
+              SocialMediaPlatformForm(
+                label: 'Instagram User',
+                asset: 'instagram',
+                socialMediaOption: 3,
+              ),
+              const SizedBox(
+                height: spacing,
+              ),
+              SocialMediaPlatformForm(
+                label: 'Discord User',
+                asset: 'discord',
+                socialMediaOption: 4,
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

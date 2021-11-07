@@ -197,6 +197,47 @@ class AlertTextTemplate extends StatelessWidget {
   }
 }
 
+class AlertRichTextTemplate extends StatelessWidget {
+  final String title;
+  final Widget richText;
+  const AlertRichTextTemplate({
+    Key? key,
+    required this.title,
+    required this.richText,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              height: 45,
+              width: 45,
+              child: Image.asset('assets/info.png'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.headline2,
+              ),
+            ),
+          ],
+        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        content: SingleChildScrollView(child: this.richText),
+        actions: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: AssetButton(action: DialogAction.OK),
+          ),
+        ]);
+  }
+}
+
 class BinaryAlert extends StatelessWidget {
   const BinaryAlert({
     Key? key,

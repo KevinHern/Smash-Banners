@@ -42,44 +42,34 @@ class PlayerInformationForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormCard(
-      formKey: characterFormKey,
-      child: Column(
-        children: [
-          Text(
-            "Player Information",
-            style: Theme.of(context).textTheme.headline1,
-          ),
-          utils.EmptySeparator(
-            scale: 0.02,
-          ),
-          Consumer<BannerModel>(
-            builder: (context, bannerModel, __) {
-              return Column(
-                children: [
-                  PlayerInformationInput(
-                    label: 'E-Sports Team/Crew',
-                    asset: 'joystick',
-                    initialValue: bannerModel.eSportsTeam,
-                    onChanged: (value) =>
-                        bannerModel.setESportsTeam(eSportsTeam: value),
-                  ),
-                  const SizedBox(
-                    height: 12.0,
-                  ),
-                  PlayerInformationInput(
-                    label: 'Player Tag',
-                    asset: 'smash_bros',
-                    initialValue: bannerModel.playerTag,
-                    onChanged: (value) =>
-                        bannerModel.setPlayerTag(playerTag: value),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+    return Column(
+      children: [
+        Consumer<BannerModel>(
+          builder: (context, bannerModel, __) {
+            return Column(
+              children: [
+                PlayerInformationInput(
+                  label: 'E-Sports Team/Crew',
+                  asset: 'joystick',
+                  initialValue: bannerModel.eSportsTeam,
+                  onChanged: (value) =>
+                      bannerModel.setESportsTeam(eSportsTeam: value),
+                ),
+                const SizedBox(
+                  height: 12.0,
+                ),
+                PlayerInformationInput(
+                  label: 'Player Tag',
+                  asset: 'smash_bros',
+                  initialValue: bannerModel.playerTag,
+                  onChanged: (value) =>
+                      bannerModel.setPlayerTag(playerTag: value),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }

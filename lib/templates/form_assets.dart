@@ -34,22 +34,38 @@ class FormContainerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: this.title,
-          labelStyle: TextStyle(
-            fontFamily: Theme.of(context).textTheme.subtitle1!.fontFamily,
-            color: Colors.black,
-          ),
-          border: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: Theme.of(context).accentColor, width: 0.0),
-            borderRadius: BorderRadius.circular(16),
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                width: 0,
+                color: Theme.of(context).primaryColor,
+              ),
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            child: this.child,
           ),
         ),
-        child: this.child,
-      ),
+        Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            color: Colors.white,
+            child: Text(
+              this.title,
+              style: TextStyle(
+                fontFamily: Theme.of(context).textTheme.subtitle1!.fontFamily,
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
