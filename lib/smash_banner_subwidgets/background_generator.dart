@@ -132,7 +132,6 @@ class BackgroundGeneratorForm extends StatelessWidget {
                       throw Exception("Unreachable option in Background Style");
                   }
                 }
-                ;
               },
               showSelectedItems: true,
               validator: (String? item) {
