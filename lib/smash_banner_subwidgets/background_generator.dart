@@ -372,7 +372,7 @@ class BackgroundGeneratorForm extends StatelessWidget {
                       // Do request
                       http.Response response = await http.post(
                         Uri.parse(
-                          "http://067f-34-132-89-37.ngrok.io/background",
+                          "http://c374-34-74-250-228.ngrok.io/background",
                         ),
                         body: {
                           "style": this.formParameters[0],

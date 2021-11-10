@@ -92,8 +92,8 @@ class AssetButton extends StatelessWidget {
         height: 40,
         width: 40,
         child: (this.action == DialogAction.OK)
-            ? Image.asset('assets/confirm.png')
-            : Image.asset('assets/cancel.png'),
+            ? Image.asset('assets/icons/confirm.png')
+            : Image.asset('assets/icons/cancel.png'),
       ),
       onTap: () => (this.action == DialogAction.OK)
           ? Navigator.of(context).pop(true)
@@ -123,7 +123,7 @@ class AlertTemplate extends StatelessWidget {
           Container(
             height: 45,
             width: 45,
-            child: Image.asset('assets/info.png'),
+            child: Image.asset('assets/icons/info.png'),
           ),
           Padding(
             padding: EdgeInsets.only(left: 15),
@@ -174,7 +174,7 @@ class AlertTextTemplate extends StatelessWidget {
             Container(
               height: 45,
               width: 45,
-              child: Image.asset('assets/info.png'),
+              child: Image.asset('assets/icons/info.png'),
             ),
             Padding(
               padding: EdgeInsets.only(left: 15),
@@ -215,7 +215,7 @@ class AlertRichTextTemplate extends StatelessWidget {
             Container(
               height: 45,
               width: 45,
-              child: Image.asset('assets/info.png'),
+              child: Image.asset('assets/icons/info.png'),
             ),
             Padding(
               padding: EdgeInsets.only(left: 15),

@@ -25,7 +25,7 @@ class PlayerInformationInput extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(
         icon: Image.asset(
-          "assets/" + this.asset + ".png",
+          "assets/icons/" + this.asset + ".png",
           scale: 2,
         ),
         labelText: this.label,

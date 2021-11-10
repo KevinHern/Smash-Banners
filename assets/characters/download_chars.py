@@ -9,7 +9,7 @@ import numpy as np
 
 def download(characters_list, process_id):
     for character in characters_list:
-        directory = None
+        directory = "mii_fighter"
         if (character == "Donkey Kong") or (character == "Dark Samus") or (character == "Captain Falcon") or (
                 character == "Ice Climbers") or (character == "Young Link") or (character == "Meta Knight") or (
                 character == "Dark Pit") or (character == "Zero Suit Samus") or (character == "Diddy Kong") or (
@@ -22,7 +22,7 @@ def download(characters_list, process_id):
             directory = character.lower().replace(" ", "_").replace(".", "")
         elif character == "Mr. Game & Watch":
             directory = character.lower().replace(" ", "_").replace(".", "").replace("&", "and")
-        elif (character == "Mii Brawler") or (character == "Mii Swordfighter") or (character == "Mii Gunner"):
+        elif "Mii" in character:
             directory == 'mii_fighter'
         elif character == "Pac-Man":
             directory = character.lower().replace("-", "_")
@@ -54,105 +54,108 @@ def download(characters_list, process_id):
             if directory == "mii_fighter":
                 break
 
+
 if __name__ == "__main__":
     charactersList = [
-        #"Mario",
-        "Donkey Kong",
-        #"Link",
-        #"Samus",
-        #"Dark Samus",
-        #"Yoshi",
-        #"Kirby",
-        #"Fox",
-        #"Pikachu",
-        #"Luigi",
-        #"Ness",
-        #"Captain Falcon",
-        #"Jigglypuff",
-        #"Peach",
-        #"Daisy",
-        #"Bowser",
-        #"Ice Climbers",
-        #"Sheik",
-        #"Zelda",
-        #"Dr. Mario",
-        #"Pichu",
-        #"Falco",
-        #"Marth",
-        #"Lucina",
-        #"Young Link",
-        #"Ganondorf",
-        #"Mewtwo",
-        #"Roy",
-        #"Chrom",
-        #"Mr. Game & Watch",
-        #"Meta Knight",
-        #"Pit",
-        #"Dark Pit",
-        #"Zero Suit Samus",
-        #"Wario",
-        #"Snake",
-        #"Ike",
-        #"Pokemon Trainer",
-        #"Diddy Kong",
-        #"Lucas",
-        #"Sonic",
-        #"King Dedede",
-        #"Olimar",
-        #"Lucario",
-        #"R.O.B.",
-        #"Toon Link",
-        #"Wolf",
-        #"Villager",
-        #"Mega Man",
-        #"Wii Fit Trainer",
-        #"Rosalina & Luma",
-        #"Little Mac",
-        #"Greninja",
-        #"Mii Brawler",
-        #"Mii Swordfighter",
-        #"Mii Gunner",
-        #"Palutena",
-        #"Pac-Man",
-        #"Robin",
-        #"Shulk",
-        #"Bowser Jr.",
-        #"Duck Hunt",
-        #"Ryu",
-        #"Ken",
-        #"Cloud",
-        #"Corrin",
-        #"Bayonetta",
-        #"Inkling",
-        #"Ridley",
-        #"Simon",
-        #"Richter",
-        #"King K. Rool",
-        #"Isabelle",
-        #"Incineroar",
-        #"Piranha Plant",
-        #"Joker",
-        #"Hero",
-        #"Banjo & Kazooie",
-        #"Terry",
-        #"Byleth",
-        #"Min Min",
-        #"Steve",
-        #"Sephiroth",
-        #"Pyra & Mythra",
-        #"Kazuya",
-        #"Sora"
+        # "Mario",
+        # "Donkey Kong",
+        # "Link",
+        # "Samus",
+        # "Dark Samus",
+        # "Yoshi",
+        # "Kirby",
+        # "Fox",
+        # "Pikachu",
+        # "Luigi",
+        # "Ness",
+        # "Captain Falcon",
+        # "Jigglypuff",
+        # "Peach",
+        # "Daisy",
+        # "Bowser",
+        # "Ice Climbers",
+        # "Sheik",
+        # "Zelda",
+        # "Dr. Mario",
+        # "Pichu",
+        # "Falco",
+        # "Marth",
+        # "Lucina",
+        # "Young Link",
+        # "Ganondorf",
+        # "Mewtwo",
+        # "Roy",
+        # "Chrom",
+        # "Mr. Game & Watch",
+        # "Meta Knight",
+        # "Pit",
+        # "Dark Pit",
+        # "Zero Suit Samus",
+        # "Wario",
+        # "Snake",
+        # "Ike",
+        # "Pokemon Trainer",
+        # "Diddy Kong",
+        # "Lucas",
+        # "Sonic",
+        # "King Dedede",
+        # "Olimar",
+        # "Lucario",
+        # "R.O.B.",
+        # "Toon Link",
+        # "Wolf",
+        # "Villager",
+        # "Mega Man",
+        # "Wii Fit Trainer",
+        # "Rosalina & Luma",
+        # "Little Mac",
+        # "Greninja",
+        "Mii Brawler",
+        "Mii Swordfighter",
+        "Mii Gunner",
+        "Palutena",
+        # "Pac-Man",
+        # "Robin",
+        # "Shulk",
+        # "Bowser Jr.",
+        # "Duck Hunt",
+        # "Ryu",
+        # "Ken",
+        # "Cloud",
+        # "Corrin",
+        # "Bayonetta",
+        # "Inkling",
+        # "Ridley",
+        # "Simon",
+        # "Richter",
+        # "King K. Rool",
+        # "Isabelle",
+        # "Incineroar",
+        # "Piranha Plant",
+        # "Joker",
+        # "Hero",
+        # "Banjo & Kazooie",
+        # "Terry",
+        # "Byleth",
+        # "Min Min",
+        # "Steve",
+        # "Sephiroth",
+        # "Pyra & Mythra",
+        # "Kazuya",
+        # "Sora"
     ]
 
     processes = []
-    num_threads = 2
+    num_threads = 1
     chunks = np.array_split(charactersList, num_threads)
-
+    download(charactersList, 1)
     # Create the N threads
+    '''
     for i in range(num_threads):
-        process = Process(target=download, args=[chunks[i], i])
+        process = Process(target=download, args=[charactersList, i])
         process.start()
         processes.append(process)
 
     for process in processes:
         process.join()
+    '''

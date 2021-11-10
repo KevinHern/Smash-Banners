@@ -39,7 +39,7 @@ class SmashBannerExpandable extends StatelessWidget {
                   elevation: 2.0,
                   backgroundColor: Colors.transparent,
                   child: Image.asset(
-                    'assets/info.png',
+                    'assets/icons/info.png',
                     scale: 2.5,
                   ),
                   onPressed: () {
@@ -81,7 +81,7 @@ class SmashBannerScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: Image.asset(
-          'assets/smash_bros.png',
+          'assets/icons/smash_bros.png',
           scale: 0.9,
         ),
         title: Text(
