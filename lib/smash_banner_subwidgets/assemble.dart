@@ -1,11 +1,19 @@
 // Basic Imports
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:smash_banners/utilities/utils.dart' as utils;
+import 'dart:html' as html;
+import 'dart:ui' as ui;
 
 // Extra Widgets
 import 'package:flutter_spinbox/flutter_spinbox.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:future_progress_dialog/future_progress_dialog.dart';
 
 // Models
 import 'package:smash_banners/models/banner_model.dart';
@@ -18,6 +26,9 @@ import 'package:smash_banners/templates/customization_assets.dart';
 // Math stuff
 import 'dart:convert';
 import 'dart:math';
+
+// Backend stuff
+import 'package:http/http.dart' as http;
 
 enum CharacterPosition { X, Y }
 
@@ -99,7 +110,7 @@ class SocialMediaPlatform extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Image.asset(
-            "assets/" + this.asset + ".png",
+            "assets/icons/" + this.asset + ".png",
             height: 0.2 * this.scale,
             fit: BoxFit.fitHeight,
           ),
@@ -122,9 +133,30 @@ class SocialMediaPlatform extends StatelessWidget {
   }
 }
 
+class MyImage extends StatelessWidget {
+  final String imageUrl;
+  MyImage({required this.imageUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    // https://github.com/flutter/flutter/issues/41563
+    // ignore: undefined_prefixed_name
+    ui.platformViewRegistry.registerViewFactory(
+      imageUrl,
+      (int _) => html.ImageElement()..src = imageUrl,
+    );
+    return HtmlElementView(
+      viewType: imageUrl,
+    );
+  }
+}
+
 class AssembleSection extends StatelessWidget {
   final smashServerLink = "https://www.smashbros.com/assets_v2/img/fighter/";
   static const double fixedSpacing = 8.0;
+  final ScreenshotController screenshotController = ScreenshotController();
+  final ScreenshotController dummyController = ScreenshotController();
+  final src = GlobalKey();
 
   List<Widget> socialPlatforms({required BannerModel bannerModel}) {
     const assets = ['twitch', 'twitter', 'youtube', 'instagram', 'discord'];
@@ -182,15 +214,17 @@ class AssembleSection extends StatelessWidget {
                   scale: 0.02,
                 ),
                 Center(
-                  child: Container(
-                    constraints: BoxConstraints(maxHeight: 384, maxWidth: 768),
-                    height: 2.56 * bannerModel.backgroundScale,
-                    width: 5.12 * bannerModel.backgroundScale,
-                    child: Stack(
-                      children: [
-                        (bannerModel.encodedBackground != null)
-                            ? Center(
-                                child: Image.memory(
+                  child: RepaintBoundary(
+                    key: this.src,
+                    child: Container(
+                      constraints:
+                          BoxConstraints(maxHeight: 384, maxWidth: 768),
+                      height: 2.56 * bannerModel.backgroundScale,
+                      width: 5.12 * bannerModel.backgroundScale,
+                      child: Stack(
+                        children: [
+                          (bannerModel.encodedBackground != null)
+                              ? Image.memory(
                                   base64.decode(
                                     bannerModel.encodedBackground!,
                                   ),
@@ -199,135 +233,179 @@ class AssembleSection extends StatelessWidget {
                                   alignment: FractionalOffset.center,
                                   fit: BoxFit.fill,
                                   colorBlendMode: BlendMode.color,
-                                ),
-                              )
-                            : Container(),
-                        (bannerModel.character != null)
-                            ? Positioned(
-                                top: bannerModel.characterPosY,
-                                left: bannerModel.characterPosX,
-                                child: SizedBox(
-                                  height: 2.1 * bannerModel.characterScale,
-                                  child: Image.network(
-                                    this.smashServerLink +
-                                        bannerModel.character! +
-                                        "/main" +
-                                        ((bannerModel.alt != 1)
-                                            ? bannerModel.alt.toString()
-                                            : "") +
-                                        ".png",
-                                    fit: BoxFit.fitHeight,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null)
-                                        return Transform(
-                                          alignment: Alignment.center,
-                                          transform: Matrix4.rotationY(
-                                              bannerModel.flipCharacter
-                                                  ? pi
-                                                  : 0),
-                                          child: child,
-                                        );
-                                      return Container(
-                                        height: 220,
-                                        width: 450,
-                                        child: Center(
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              CircularProgressIndicator(),
-                                              const SizedBox(
-                                                height: 8.0,
-                                              ),
-                                              Text(
-                                                "Getting Fighter...",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyText1,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                )
+                              : Container(),
+                          (bannerModel.character != null)
+                              ? Positioned(
+                                  top: bannerModel.characterPosY,
+                                  left: bannerModel.characterPosX,
+                                  child: SizedBox(
+                                    height: 2.1 * bannerModel.characterScale,
+                                    child: Image.asset(
+                                      'assets/characters/' +
+                                          bannerModel.character! +
+                                          "/main" +
+                                          ((bannerModel.alt != 1)
+                                              ? bannerModel.alt.toString()
+                                              : "") +
+                                          ".png",
+                                      fit: BoxFit.fitHeight,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : Container(),
-                        Align(
-                          alignment: (bannerModel.flipSocialMedia)
-                              ? Alignment.topCenter
-                              : Alignment.bottomCenter,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              top: bannerModel.flipSocialMedia
-                                  ? bannerModel.socialMediaOffset
-                                  : 0,
-                              bottom: bannerModel.flipSocialMedia
-                                  ? 0
-                                  : bannerModel.socialMediaOffset,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: this
-                                  .socialPlatforms(bannerModel: bannerModel),
+                                )
+                              : Container(),
+                          Align(
+                            alignment: (bannerModel.flipSocialMedia)
+                                ? Alignment.topCenter
+                                : Alignment.bottomCenter,
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                top: bannerModel.flipSocialMedia
+                                    ? bannerModel.socialMediaOffset
+                                    : 0,
+                                bottom: bannerModel.flipSocialMedia
+                                    ? 0
+                                    : bannerModel.socialMediaOffset,
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: this
+                                    .socialPlatforms(bannerModel: bannerModel),
+                              ),
                             ),
                           ),
-                        ),
-                        (bannerModel.eSportsTeam != null)
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                  top: bannerModel.eSportsY,
-                                  left: bannerModel.eSportsX,
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: Text(
-                                    bannerModel.eSportsTeam!,
-                                    style: TextStyle(
-                                      fontFamily: Theme.of(context)
-                                          .textTheme
-                                          .subtitle1!
-                                          .fontFamily,
-                                      fontSize: 0.2 * bannerModel.eSportsScale,
-                                      fontStyle: bannerModel.eSportsFontStyle,
-                                      fontWeight: bannerModel.eSportsFontWeight,
-                                      color: Color(bannerModel.eSportsColor),
+                          (bannerModel.eSportsTeam != null)
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                    top: bannerModel.eSportsY,
+                                    left: bannerModel.eSportsX,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      bannerModel.eSportsTeam!,
+                                      style: TextStyle(
+                                        fontFamily: Theme.of(context)
+                                            .textTheme
+                                            .subtitle1!
+                                            .fontFamily,
+                                        fontSize:
+                                            0.2 * bannerModel.eSportsScale,
+                                        fontStyle: bannerModel.eSportsFontStyle,
+                                        fontWeight:
+                                            bannerModel.eSportsFontWeight,
+                                        color: Color(bannerModel.eSportsColor),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Container(),
-                        (bannerModel.playerTag != null)
-                            ? Padding(
-                                padding: EdgeInsets.only(
-                                  top: bannerModel.playerTagY,
-                                  left: bannerModel.playerTagX,
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: Text(
-                                    bannerModel.playerTag!,
-                                    style: TextStyle(
-                                      fontFamily: Theme.of(context)
-                                          .textTheme
-                                          .headline1!
-                                          .fontFamily,
-                                      fontSize:
-                                          0.2 * bannerModel.playerTagScale,
-                                      fontStyle: bannerModel.playerTagFontStyle,
-                                      fontWeight:
-                                          bannerModel.playerTagFontWeight,
-                                      color: Color(bannerModel.playerTagColor),
+                                )
+                              : Container(),
+                          (bannerModel.playerTag != null)
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                    top: bannerModel.playerTagY,
+                                    left: bannerModel.playerTagX,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.fitWidth,
+                                    child: Text(
+                                      bannerModel.playerTag!,
+                                      style: TextStyle(
+                                        fontFamily: Theme.of(context)
+                                            .textTheme
+                                            .headline1!
+                                            .fontFamily,
+                                        fontSize:
+                                            0.2 * bannerModel.playerTagScale,
+                                        fontStyle:
+                                            bannerModel.playerTagFontStyle,
+                                        fontWeight:
+                                            bannerModel.playerTagFontWeight,
+                                        color:
+                                            Color(bannerModel.playerTagColor),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
-                            : Container(),
-                      ],
+                                )
+                              : Container(),
+                        ],
+                      ),
                     ),
                   ),
+                ),
+                utils.EmptySeparator(
+                  scale: 0.02,
+                ),
+                // Screenshot(
+                //     child: Text("hola"), controller: this.dummyController),
+                FormButton(
+                  icon: Icons.download,
+                  label: "Gimme Now!",
+                  onPressed: () async {
+                    bool success = await showDialog(
+                      context: context,
+                      builder: (context) => FutureProgressDialog(
+                        Future(
+                          () async {
+                            try {
+                              Uint8List? banner;
+                              //await this.screenshotController.capture();
+                              //await this.dummyController.capture();
+                              RenderRepaintBoundary boundary =
+                                  src.currentContext!.findRenderObject()
+                                      as RenderRepaintBoundary;
+                              var image = await boundary.toImage();
+                              var byteData = await image.toByteData(
+                                  format: ImageByteFormat.png);
+                              var pngBytes = byteData;
+                              if (byteData != null)
+                                banner = byteData.buffer.asUint8List();
+                              print(banner);
+                              if (banner != null) {
+                                // Flutter web shenanigans to manipulate files and download it
+                                final blob = html.Blob([banner]);
+                                final url =
+                                    html.Url.createObjectUrlFromBlob(blob);
+                                final anchor = html.document.createElement('a')
+                                    as html.AnchorElement
+                                  ..href = url
+                                  ..style.display = 'none'
+                                  ..download = 'ssbu_banner.png';
+                                html.document.body!.children.add(anchor);
+
+                                // download
+                                anchor.click();
+
+                                // cleanup
+                                html.document.body!.children.remove(anchor);
+                                html.Url.revokeObjectUrl(url);
+                                return true;
+                              } else
+                                return false;
+                            } catch (error) {
+                              print(error);
+                              return false;
+                            }
+                          },
+                        ),
+                        message: Text(
+                          'Converting your banner...',
+                          style: Theme.of(context).textTheme.bodyText1,
+                        ),
+                      ),
+                    );
+
+                    if (success)
+                      DialogTemplate.showMessage(
+                          context: context,
+                          message:
+                              "Thank you for using the generator! Have fun with your new banner :D");
+                    else
+                      DialogTemplate.showMessage(
+                          context: context,
+                          message: "An error has ocurred, please try again.");
+                  },
                 ),
                 utils.EmptySeparator(
                   scale: 0.02,
